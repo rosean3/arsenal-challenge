@@ -12,11 +12,10 @@ import { auth, db } from "../../firebase";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import PopupComponent from "../components/PopUpComponent";
 const googleIcon = require("../../assets/googleIcon.png");
 
 const RegistrationScreen = () => {
@@ -25,36 +24,12 @@ const RegistrationScreen = () => {
   const [name, setName] = useState("");
 
   const navigation = useNavigation();
-
-  const [loggedIn, setloggedIn] = useState(false);
-  const [userInfo, setuserInfo] = useState([]);
-
-  // const signInWithGoogle = async () => {
-  //   const provider = new GoogleAuthProvider();
-
-  //   try {
-  //     console.log("teste1");
-  //     const result = await signInWithPopup(auth, provider);
-  //     // This gives you a Google Access Token. You can use it to access Google APIs.
-  //     const token = result.credential.accessToken;
-  //     // The signed-in user info.
-  //     const user = result.user;
-  //     console.log("teste2");
-  //   } catch (error) {
-  //     // Handle Errors here.
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // The email of the user's account used.
-  //     const email = error.email;
-  //     // The AuthCredential type that was used.
-  //     const credential = GoogleAuthProvider.credentialFromError(error);
-  //   }
-  // };
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigation.navigate("Home");
+        setIsPopupVisible(true);
       }
     });
 
@@ -63,6 +38,7 @@ const RegistrationScreen = () => {
       setEmail("");
       setPassword("");
       setName("");
+      setIsPopupVisible(false);
     };
   }, []);
 
@@ -85,22 +61,29 @@ const RegistrationScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
+    <View style={styles.container} behavior="padding">
+      <PopupComponent
+        isVisible={isPopupVisible}
+        onPress={() => {
+          setIsPopupVisible(false);
+          navigation.replace("Home");
+        }}
+      />
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Name"
+          placeholder="Nome"
           value={name}
           onChangeText={(text) => setName(text)}
           style={styles.input}
         />
         <TextInput
-          placeholder="Email"
+          placeholder="E-mail"
           value={email}
           onChangeText={(text) => setEmail(text)}
           style={styles.input}
         />
         <TextInput
-          placeholder="Password"
+          placeholder="Senha"
           value={password}
           onChangeText={(text) => setPassword(text)}
           style={styles.input}
@@ -117,7 +100,7 @@ const RegistrationScreen = () => {
           <Image style={styles.icons} source={googleIcon} />
         </TouchableOpacity>
       </View>
-      <View style={[styles.buttonContainer, styles.registerButtonContainer]}>
+      <View style={[styles.buttonContainer, styles.loginButtonContainer]}>
         <Text>Já tem uma conta? Faça seu login</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate("Login")}
@@ -126,7 +109,7 @@ const RegistrationScreen = () => {
           <Text style={styles.buttonOutlineText}>Login</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -134,7 +117,7 @@ export default RegistrationScreen;
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
+    marginTop: "70%",
     alignItems: "center",
     flex: 1,
   },
@@ -166,9 +149,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
   },
-  registerButtonContainer: {
-    position: "absolute",
-    bottom: "10%",
+  loginButtonContainer: {
+    marginTop: "25%",
   },
   buttonOutlineText: {
     color: "#0782F9",
@@ -200,6 +182,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "60%",
-    backgroundColor: "pink",
   },
 });

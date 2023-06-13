@@ -8,11 +8,7 @@ import {
 } from "react-native";
 import { React, useEffect, useState } from "react";
 import { auth } from "../../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
@@ -28,33 +24,20 @@ const LoginScreen = () => {
       }
     });
 
-    return unsubscribe;
+    return unsubscribe();
   }, []);
-
-  const handleSignUp = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("Registered with:", user.email);
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
 
   const handleLogin = async () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
         console.log("Logged in with:", user.email);
+        setEmail("");
+        setPassword("");
         // ...
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ...
+        alert(error.message);
       });
   };
 
@@ -78,12 +61,6 @@ const LoginScreen = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleSignUp}
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -121,19 +98,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-  buttonOutline: {
-    backgroundColor: "white",
-    marginTop: 5,
-    borderColor: "#0782F9",
-    borderWidth: 2,
-  },
   buttonText: {
     color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  buttonOutlineText: {
-    color: "#0782F9",
     fontWeight: "700",
     fontSize: 16,
   },

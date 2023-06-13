@@ -1,16 +1,33 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { auth } from "../../firebase";
+import { React, useEffect, useState } from "react";
+import { auth, db } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      getDoc(userDoc)
+        .then((userSnapshot) => {
+          if (userSnapshot.exists()) {
+            setUserName(userSnapshot.data().name);
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+  }, [auth.currentUser]);
 
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
-        navigation.replace("Login");
+        navigation.replace("Registration");
       })
       .catch((error) => {
         alert(error.message);
@@ -20,6 +37,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Email: {auth.currentUser?.email}</Text>
+      <Text>Name: {userName}</Text>
       <TouchableOpacity onPress={handleSignOut} style={styles.button}>
         <Text style={styles.buttonText}>Sign out</Text>
       </TouchableOpacity>

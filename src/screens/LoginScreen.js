@@ -29,7 +29,10 @@ const LoginScreen = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigation.replace("Home");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
       }
     });
 
@@ -41,7 +44,10 @@ const LoginScreen = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("Logged in with:", user.email);
-        navigation.replace("Home");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
       })
       .catch((error) => {
         alert(error.message);

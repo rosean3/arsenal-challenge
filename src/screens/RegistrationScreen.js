@@ -15,7 +15,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import PopupComponent from "../components/PopUpComponent";
 const googleIcon = require("../../assets/googleIcon.png");
 
@@ -34,19 +34,6 @@ const RegistrationScreen = () => {
 
   const navigation = useNavigation();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const route = useRoute().name;
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigation.replace("Home");
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   const handleSignUp = async (data) => {
     try {
@@ -73,7 +60,10 @@ const RegistrationScreen = () => {
         isVisible={isPopupVisible}
         onPress={() => {
           setIsPopupVisible(false);
-          navigation.replace("Home");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+          });
         }}
       />
       <KeyboardAvoidingView style={styles.inputContainer}>

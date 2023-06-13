@@ -10,10 +10,19 @@ import { React, useEffect, useState } from "react";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { useForm, Controller } from "react-hook-form";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   const navigation = useNavigation();
 
@@ -27,14 +36,12 @@ const LoginScreen = () => {
     return unsubscribe();
   }, []);
 
-  const handleLogin = async () => {
-    signInWithEmailAndPassword(auth, email, password)
+  const handleLogin = async (data) => {
+    signInWithEmailAndPassword(auth, data.email, data.password)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("Logged in with:", user.email);
-        setEmail("");
-        setPassword("");
-        // ...
+        navigation.replace("Home");
       })
       .catch((error) => {
         alert(error.message);
@@ -44,22 +51,47 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          style={styles.input}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Email"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+            />
+          )}
+          name="email"
         />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
+        {errors.email && <Text>Este campo é obrigatório.</Text>}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Senha"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+              secureTextEntry
+            />
+          )}
+          name="password"
         />
+        {errors.password && <Text>Este campo é obrigatório.</Text>}
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
+        <TouchableOpacity
+          onPress={handleSubmit(handleLogin)}
+          style={styles.button}
+        >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>

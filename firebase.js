@@ -19,10 +19,8 @@ const firebaseConfig = {
 let app;
 if (!getApps().length) {
   app = initializeApp(firebaseConfig);
-  console.log("testing");
 } else {
   app = getApp();
-  console.log("testing2");
 }
 
 const auth = getAuth(app);

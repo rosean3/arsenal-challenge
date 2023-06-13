@@ -7,6 +7,7 @@ import {
   View,
   Image,
 } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 import { React, useEffect, useState } from "react";
 import { auth, db } from "../../firebase";
 import {
@@ -14,47 +15,53 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import PopupComponent from "../components/PopUpComponent";
 const googleIcon = require("../../assets/googleIcon.png");
 
 const RegistrationScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
 
   const navigation = useNavigation();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const route = useRoute().name;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setIsPopupVisible(true);
+        navigation.replace("Home");
       }
     });
 
     return () => {
       unsubscribe();
-      setEmail("");
-      setPassword("");
-      setName("");
-      setIsPopupVisible(false);
     };
   }, []);
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (data) => {
     try {
       // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        email,
-        password
+        data.email,
+        data.password
       );
       const user = userCredential.user;
       console.log("Registered with:", user.email);
 
       // Store additional user information in Firestore
-      await setDoc(doc(db, "users", user.uid), { name });
+      await setDoc(doc(db, "users", user.uid), { name: data.name });
+      setIsPopupVisible(true);
     } catch (error) {
       alert(error.message);
     }
@@ -69,39 +76,76 @@ const RegistrationScreen = () => {
           navigation.replace("Home");
         }}
       />
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Nome"
-          value={name}
-          onChangeText={(text) => setName(text)}
-          style={styles.input}
+      <KeyboardAvoidingView style={styles.inputContainer}>
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Nome"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+            />
+          )}
+          name="name"
         />
-        <TextInput
-          placeholder="E-mail"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          style={styles.input}
+        {errors.name && <Text>Este campo é obrigatório.</Text>}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Email"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+            />
+          )}
+          name="email"
         />
-        <TextInput
-          placeholder="Senha"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
+        {errors.email && <Text>Este campo é obrigatório.</Text>}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Senha"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+              secureTextEntry
+            />
+          )}
+          name="password"
         />
-      </View>
+        {errors.password && <Text>Este campo é obrigatório.</Text>}
+      </KeyboardAvoidingView>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSignUp} style={styles.button}>
-          <Text style={styles.buttonText}>Register</Text>
+        <TouchableOpacity
+          onPress={handleSubmit(handleSignUp)}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
+
       <View style={styles.iconsContainer}>
         <TouchableOpacity onPress={() => {}} style={styles.iconContainer}>
           <Image style={styles.icons} source={googleIcon} />
         </TouchableOpacity>
       </View>
       <View style={[styles.buttonContainer, styles.loginButtonContainer]}>
-        <Text>Já tem uma conta? Faça seu login</Text>
+        <Text>Já tem uma conta? Faça seu login.</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate("Login")}
           style={[styles.button, styles.buttonOutline]}
@@ -117,8 +161,9 @@ export default RegistrationScreen;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: "70%",
+    marginTop: "50%",
     alignItems: "center",
+    justifyContent: "center",
     flex: 1,
   },
   inputContainer: {
@@ -150,7 +195,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginButtonContainer: {
-    marginTop: "25%",
+    position: "static",
+    bottom: 0,
   },
   buttonOutlineText: {
     color: "#0782F9",

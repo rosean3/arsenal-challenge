@@ -60,7 +60,11 @@ const LoginScreen = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: "Este campo é obrigatório",
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+              message: "Endereço de email inválido",
+            },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
@@ -73,11 +77,13 @@ const LoginScreen = () => {
           )}
           name="email"
         />
-        {errors.email && <Text>Este campo é obrigatório.</Text>}
+        {errors.email && (
+          <Text style={styles.errorText}>*{errors.email.message}</Text>
+        )}
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: "Este campo é obrigatório",
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
@@ -91,7 +97,9 @@ const LoginScreen = () => {
           )}
           name="password"
         />
-        {errors.password && <Text>Este campo é obrigatório.</Text>}
+        {errors.password && (
+          <Text style={styles.errorText}>*{errors.password.message}</Text>
+        )}
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -140,5 +148,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "700",
     fontSize: 16,
+  },
+  errorText: {
+    color: "red",
   },
 });

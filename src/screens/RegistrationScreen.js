@@ -70,7 +70,7 @@ const RegistrationScreen = () => {
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: "Este campo é obrigatório",
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
@@ -83,11 +83,17 @@ const RegistrationScreen = () => {
           )}
           name="name"
         />
-        {errors.name && <Text>Este campo é obrigatório.</Text>}
+        {errors.name && (
+          <Text style={styles.errorText}>*{errors.name.message}</Text>
+        )}
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: "Este campo é obrigatório",
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+              message: "Endereço de email inválido",
+            },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
@@ -100,11 +106,25 @@ const RegistrationScreen = () => {
           )}
           name="email"
         />
-        {errors.email && <Text>Este campo é obrigatório.</Text>}
+        {errors.email && (
+          <Text style={styles.errorText}>*{errors.email.message}</Text>
+        )}
         <Controller
           control={control}
           rules={{
-            required: true,
+            required: "Este campo é obrigatório",
+            validate: {
+              minLength: (value) =>
+                value.length >= 8 || "A senha deve ter pelo menos 8 caracteres",
+              upperCase: (value) =>
+                /[A-Z]/.test(value) ||
+                "A senha deve conter pelo menos um caractere maiúsculo",
+              number: (value) =>
+                /\d/.test(value) || "A senha deve conter pelo menos um número",
+              specialChar: (value) =>
+                /[!@#$%^&*]/.test(value) ||
+                "A senha deve conter pelo menos um caractere especial",
+            },
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
@@ -118,7 +138,9 @@ const RegistrationScreen = () => {
           )}
           name="password"
         />
-        {errors.password && <Text>Este campo é obrigatório.</Text>}
+        {errors.password && (
+          <Text style={styles.errorText}>*{errors.password.message}</Text>
+        )}
       </KeyboardAvoidingView>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -218,5 +240,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "60%",
+  },
+  errorText: {
+    color: "red",
   },
 });

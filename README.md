@@ -14,9 +14,8 @@ Eu trabalhei em duas branches:
  - `main`: onde está a parte básica do código | fácil testagem.
  - `google-sign-in`: feature de sign in com google implementada para android.
 
+# Como rodar
 ## main
-
-### como rodar
 1. É preciso ter `npm`, `npx` e `yarn` instalados na sua máquina.
 2. Clonar o repositório e navegar até a sua pasta.
 3. No terminal:
@@ -25,21 +24,18 @@ Eu trabalhei em duas branches:
 4. Escanear o QR code disponível no seu celular e/ou usar um emulador de Android.
 
 ## google-sign-in
-### como rodar
 
 1. É preciso ter `npm`, `npx` e `yarn` instalados na sua máquina.
-2. Clonar o repositório e navegar até a sua pasta.
-3. No terminal:
+2. Clonar o repositório e navegar até a sua pasta.	
+3. Baixar a versão do build no seu celular a partir do link: [build](https://expo.dev/accounts/rosean3/projects/arsenal-challenge/builds/1ce157aa-9836-476b-b14a-b9f64015b0c6).
+4. No terminal:
 	- `yarn install`
-	- `npx expo start`
-4. Baixar a versão do build no seu celular a partir do link: [build](https://expo.dev/accounts/rosean3/projects/arsenal-challenge/builds/1ce157aa-9836-476b-b14a-b9f64015b0c6).
-5. No terminal:
-	`npx expo start --dev-client`
-6. Escanear código no celular ou emular com Android Studio.
+	- `npx expo start --dev-client`
+5. Escanear código no celular ou emular com Android Studio.
 
 Obs.: é possível que o seu celular tente te impedir de instalar o aplicativo, mas é só clicar em "instalar mesmo assim".
 
-## Como testar
+# Como testar
 
  1. Crie uma conta.
 	 - Tente se cadastrar sem colocar algumas informações para ver os erros.

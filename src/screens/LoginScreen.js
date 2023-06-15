@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { React, useEffect, useState } from "react";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
@@ -22,22 +21,10 @@ const LoginScreen = () => {
       email: "",
       password: "",
     },
+    mode: "onBlur",
   });
 
   const navigation = useNavigation();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Home" }],
-        });
-      }
-    });
-
-    return unsubscribe();
-  }, []);
 
   const handleLogin = async (data) => {
     signInWithEmailAndPassword(auth, data.email, data.password)
@@ -57,49 +44,21 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
-        <Controller
+        <ControllerInput
           control={control}
-          rules={{
-            required: "Campo obrigatório",
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-              message: "Endereço de email inválido",
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="E-mail"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
           name="email"
+          rules={emailRules}
+          placeholder="E-mail"
         />
-        {errors.email && (
-          <Text style={styles.errorText}>*{errors.email.message}</Text>
-        )}
-        <Controller
+        {errors.email && <ErrorText message={errors.email.message} />}
+        <ControllerInput
           control={control}
-          rules={{
-            required: "Campo obrigatório",
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Senha"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-              secureTextEntry
-            />
-          )}
           name="password"
+          rules={passwordRules}
+          placeholder="Senha"
+          secureTextEntry
         />
-        {errors.password && (
-          <Text style={styles.errorText}>*{errors.password.message}</Text>
-        )}
+        {errors.password && <ErrorText message={errors.password.message} />}
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -112,6 +71,39 @@ const LoginScreen = () => {
     </KeyboardAvoidingView>
   );
 };
+
+const emailRules = {
+  required: "Campo obrigatório",
+  pattern: {
+    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+    message: "Endereço de email inválido",
+  },
+};
+
+const passwordRules = {
+  required: "Campo obrigatório",
+};
+
+const ControllerInput = ({ control, name, rules, ...props }) => (
+  <Controller
+    control={control}
+    rules={rules}
+    render={({ field: { onChange, onBlur, value } }) => (
+      <TextInput
+        onBlur={onBlur}
+        onChangeText={onChange}
+        value={value}
+        style={styles.input}
+        {...props}
+      />
+    )}
+    name={name}
+  />
+);
+
+const ErrorText = ({ message }) => (
+  <Text style={styles.errorText}>*{message}</Text>
+);
 
 export default LoginScreen;
 

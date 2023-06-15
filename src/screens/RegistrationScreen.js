@@ -30,6 +30,7 @@ const RegistrationScreen = () => {
       email: "",
       password: "",
     },
+    mode: "onChange",
   });
 
   const navigation = useNavigation();
@@ -150,12 +151,6 @@ const RegistrationScreen = () => {
           <Text style={styles.buttonText}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.iconsContainer}>
-        <TouchableOpacity onPress={() => {}} style={styles.iconContainer}>
-          <Image style={styles.icons} source={googleIcon} />
-        </TouchableOpacity>
-      </View>
       <View style={[styles.buttonContainer, styles.loginButtonContainer]}>
         <Text>Já tem uma conta? Faça seu login.</Text>
         <TouchableOpacity
@@ -220,26 +215,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderColor: "#0782F9",
     borderWidth: 2,
-  },
-  icons: {
-    width: 35,
-    height: 35,
-  },
-  iconContainer: {
-    borderRadius: 50,
-    backgroundColor: "grey",
-    width: 40,
-    height: 40,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconsContainer: {
-    marginTop: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "60%",
   },
   errorText: {
     color: "red",

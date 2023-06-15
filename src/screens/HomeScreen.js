@@ -8,9 +8,11 @@ import { doc, getDoc, getFirestore } from "firebase/firestore";
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     if (auth.currentUser) {
+      setUserEmail(auth.currentUser?.email);
       const userDoc = doc(db, "users", auth.currentUser.uid);
       getDoc(userDoc)
         .then((userSnapshot) => {
@@ -37,7 +39,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Bem vinde, {userName}!</Text>
-      <Text>Email: {auth.currentUser?.email}</Text>
+      <Text>Email: {userEmail}</Text>
       <TouchableOpacity onPress={handleSignOut} style={styles.button}>
         <Text style={styles.buttonText}>Sign out</Text>
       </TouchableOpacity>

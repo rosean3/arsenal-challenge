@@ -8,8 +8,9 @@ import {
   Image,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
-import { React, useEffect, useState } from "react";
-import { auth, db } from "../../firebase";
+import { React, useState, useEffect } from "react";
+import { firebaseAuth, db } from "../../firebase";
+import auth from "@react-native-firebase/auth";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -18,6 +19,22 @@ import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import PopupComponent from "../components/PopUpComponent";
 const googleIcon = require("../../assets/googleIcon.png");
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
+GoogleSignin.configure({
+  webClientId:
+    "532114080761-7la7296o1bc3poisd6g9nij198knnhce.apps.googleusercontent.com",
+});
+
+async function onGoogleButtonPress() {
+  await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+  const { idToken } = await GoogleSignin.signIn();
+
+  const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+  return auth().signInWithCredential(googleCredential);
+}
 
 const RegistrationScreen = () => {
   const {
@@ -30,6 +47,7 @@ const RegistrationScreen = () => {
       email: "",
       password: "",
     },
+    mode: "onChange",
   });
 
   const navigation = useNavigation();
@@ -37,21 +55,35 @@ const RegistrationScreen = () => {
 
   const handleSignUp = async (data) => {
     try {
-      // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(
-        auth,
+        firebaseAuth,
         data.email,
         data.password
       );
       const user = userCredential.user;
       console.log("Registered with:", user.email);
 
-      // Store additional user information in Firestore
       await setDoc(doc(db, "users", user.uid), { name: data.name });
       setIsPopupVisible(true);
     } catch (error) {
       alert(error.message);
     }
+  };
+
+  const handleGoogleSignUp = async () => {
+    onGoogleButtonPress()
+      .then(async (user) => {
+        const name = user.additionalUserInfo.profile.name;
+        const uid = user.user.uid;
+        await setDoc(doc(db, "users", uid), { name });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   return (
@@ -152,18 +184,26 @@ const RegistrationScreen = () => {
       </View>
 
       <View style={styles.iconsContainer}>
-        <TouchableOpacity onPress={() => {}} style={styles.iconContainer}>
-          <Image style={styles.icons} source={googleIcon} />
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={handleGoogleSignUp}
+        >
+          <Image source={googleIcon} style={styles.logo} />
+          <Text style={styles.text}>Sign in with Google</Text>
         </TouchableOpacity>
       </View>
       <View style={[styles.buttonContainer, styles.loginButtonContainer]}>
-        <Text>Já tem uma conta? Faça seu login.</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Login")}
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Login</Text>
-        </TouchableOpacity>
+        <Text>
+          Já tem uma conta? Faça seu{" "}
+          <Text
+            style={styles.textLink}
+            onPress={() => {
+              navigation.navigate("Login");
+            }}
+          >
+            LOGIN
+          </Text>
+        </Text>
       </View>
     </View>
   );
@@ -193,6 +233,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
+    marginBottom: 30,
   },
   button: {
     backgroundColor: "#0782F9",
@@ -206,42 +247,44 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
   },
-  loginButtonContainer: {
-    position: "static",
-    bottom: 0,
-  },
-  buttonOutlineText: {
-    color: "#0782F9",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  buttonOutline: {
-    backgroundColor: "white",
-    marginTop: 10,
-    borderColor: "#0782F9",
-    borderWidth: 2,
-  },
   icons: {
     width: 35,
     height: 35,
   },
-  iconContainer: {
-    borderRadius: 50,
-    backgroundColor: "grey",
-    width: 40,
-    height: 40,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   iconsContainer: {
-    marginTop: 10,
+    paddingTop: 30,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "60%",
+    width: "80%",
   },
   errorText: {
     color: "red",
+  },
+  textLink: {
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingVertical: 15,
+    paddingHorizontal: 35,
+    borderRadius: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  logo: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  text: {
+    fontSize: 16,
+    color: "#757575",
   },
 });

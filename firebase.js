@@ -23,7 +23,7 @@ if (!getApps().length) {
   app = getApp();
 }
 
-const auth = getAuth(app);
+const firebaseAuth = getAuth(app);
 const db = getFirestore();
 
-export { auth, db };
+export { firebaseAuth, db };

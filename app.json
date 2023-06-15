@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "FirebaseAuth",
-    "slug": "FirebaseAuth",
+    "slug": "arsenal-challenge",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rosean3.arsenalchallenge",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c09c3121-e3d3-4c01-87ae-f6fb83cca0c0"
+      }
+    },
+    "owner": "rosean3",
+    "plugins": [
+      "@react-native-google-signin/google-signin"
+    ]
   }
 }

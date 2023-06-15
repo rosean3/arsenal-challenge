@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./src/screens/LoginScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import RegistrationScreen from "./src/screens/RegistrationScreen";
+import "expo-dev-client";
 
 const Stack = createNativeStackNavigator();
 

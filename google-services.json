@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "532114080761",
+    "project_id": "arsenal-challenge",
+    "storage_bucket": "arsenal-challenge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532114080761:android:8934b6e6d14e4d15ecb328",
+        "android_client_info": {
+          "package_name": "com.rosean3.arsenalchallenge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "532114080761-4p5cpbovdgp1a03djp12kl0m0q57lel9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rosean3.arsenalchallenge",
+            "certificate_hash": "e23d618ec4daa7e471c1b1f1132a009c910b38e7"
+          }
+        },
+        {
+          "client_id": "532114080761-bmptgni9hjq8jrou79a8vppiark1329e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rosean3.arsenalchallenge",
+            "certificate_hash": "cf82ad72eaac7a4bdc405a8619d6a30b804607bc"
+          }
+        },
+        {
+          "client_id": "532114080761-7la7296o1bc3poisd6g9nij198knnhce.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuuN6S2NjGzAQbZIeODllaE8RRh2Qy2BM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "532114080761-7la7296o1bc3poisd6g9nij198knnhce.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
